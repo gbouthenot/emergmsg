@@ -9,10 +9,13 @@
 Each base64 digit represents exactly 6 bits of data. Three 8-bit bytes (i.e., a total of 24 bits) can therefore be represented by four 6-bit base64 encodings.
 
 (from https://en.wikipedia.org/wiki/Base64)</textarea>
+  <button type="button" data-action="crypt">Crypt</button>
   <br />
   <textarea id="cryptzone"></textarea>
+  <button type="button" data-action="decrypt">Decrypt</button>
   <br />
   <textarea id="decryptzone"></textarea>
+
   <script src="node_modules/base64-js/base64js.min.js"></script>
   <script src="emerg.js" type="text/javascript"></script>
 </body>

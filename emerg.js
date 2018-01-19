@@ -35,3 +35,32 @@ a.then((_) => {
   document.getElementById('decryptzone').value = new TextDecoder().decode(_);
   return _;
 });
+
+const cryptAction = () => {
+  const a = encryptText(document.getElementById('clearzone').value, password);
+  a.then((_) => {
+    const crypted64 = base64js.fromByteArray(new Uint8Array(_));
+    document.getElementById('cryptzone').value = crypted64;
+  });
+};
+
+const decryptAction = () => {
+  const crypted64 = document.getElementById('cryptzone').value;
+  const cryptedbytes = base64js.toByteArray(crypted64);
+
+  const a = decryptText(cryptedbytes, password);
+  a.then((_) => {
+    document.getElementById('decryptzone').value = new TextDecoder().decode(_);
+  });
+};
+
+const installHandlers = () => {
+  let btn;
+  btn = document.querySelector('button[data-action=crypt]');
+  btn.addEventListener('click', cryptAction);
+
+  btn = document.querySelector('button[data-action=decrypt]');
+  btn.addEventListener('click', decryptAction);
+};
+
+installHandlers();
