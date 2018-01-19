@@ -40,12 +40,16 @@ const cryptAction = () => {
   const a = encryptText(document.getElementById('clearzone').value, password);
   a.then((_) => {
     const crypted64 = base64js.fromByteArray(new Uint8Array(_));
-    document.getElementById('cryptzone').value = crypted64;
+    let formatted = '';
+    for (let i = 0; i < crypted64.length; i += 100) {
+      formatted += (i ? '\n' : '') + crypted64.slice(i, i + 100);
+    }
+    document.getElementById('cryptzone').value = formatted;
   });
 };
 
 const decryptAction = () => {
-  const crypted64 = document.getElementById('cryptzone').value;
+  const crypted64 = document.getElementById('cryptzone').value.replace(/\s/g, '');
   const cryptedbytes = base64js.toByteArray(crypted64);
 
   const a = decryptText(cryptedbytes, password);
