@@ -8,6 +8,7 @@ const encryptText = async (plainText, password) => {
   // const iv1 = crypto.getRandomValues(new Uint8Array(16));
   const alg = { name: 'AES-CBC', iv: iv1 };
   const ptUtf8 = new TextEncoder().encode(plainText);
+  console.log(`bytelength=${ptUtf8.byteLength}`);
   const pwUtf8 = new TextEncoder().encode(password);
   const pwHash = await crypto.subtle.digest('SHA-256', pwUtf8);
   const key = await crypto.subtle.importKey('raw', pwHash, alg, false, ['encrypt']);
@@ -39,9 +40,12 @@ a.then((_) => {
 */
 
 const cryptAction = () => {
+  console.log(`clearzone.length=${document.getElementById('clearzone').value.length}`);
   const a = encryptText(document.getElementById('clearzone').value, password);
   a.then((_) => {
+    console.log(`crypted.length=${_.byteLength}`);
     const crypted64 = base64js.fromByteArray(new Uint8Array(_));
+    console.log(`crypted64.length=${crypted64.length}`);
     let formatted = '';
     for (let i = 0; i < crypted64.length; i += 100) {
       formatted += (i ? '\n' : '') + crypted64.slice(i, i + 100);
