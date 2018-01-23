@@ -1,12 +1,18 @@
 dependencies:
   base64-js: 1.2.1
+  lz-string: 1.4.4
 packages:
   /base64-js/1.2.1:
     dev: false
     resolution:
       integrity: sha512-dwVUVIXsBZXwTuwnXI9RK8sBmgq09NDHzyR9SAph9eqk76gKK2JSQmZARC2zRC81JC2QTtxD0ARU5qTS25gIGw==
+  /lz-string/1.4.4:
+    dev: false
+    resolution:
+      integrity: sha1-wNjq82BZ9wV5bh40SBHPTEmNOiY=
 registry: 'https://registry.npmjs.org/'
 shrinkwrapMinorVersion: 4
 shrinkwrapVersion: 3
 specifiers:
   base64-js: ^1.2.1
+  lz-string: ^1.4.4
