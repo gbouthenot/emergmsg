@@ -25,6 +25,7 @@ const decryptText = async (cryptedbytes, password) => {
 
 const password = 'mypassword';
 
+/*
 const a = encryptText(document.getElementById('clearzone').value, password);
 a.then((_) => {
   const crypted64 = base64js.fromByteArray(new Uint8Array(_));
@@ -35,6 +36,7 @@ a.then((_) => {
   document.getElementById('decryptzone').value = new TextDecoder().decode(_);
   return _;
 });
+*/
 
 const cryptAction = () => {
   const a = encryptText(document.getElementById('clearzone').value, password);
