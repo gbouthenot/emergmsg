@@ -1,27 +1,33 @@
 /* global base64js LZString */
 /* eslint-disable no-console,no-shadow,no-lonely-if */
 
-const iv1 = new Uint8Array([0, 1, 10, 13, 15, 16, 254, 255, 9, 10, 11, 12, 13, 14, 15, 16]);
+// concatenate UInt8Arrays
+const concatTA = (a, b) => {
+  const c = new Uint8Array(a.byteLength + b.byteLength);
+  c.set(a);
+  c.set(b, a.length);
+  return c;
+};
 
 // https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto/encrypt
 const encryptText = async (plainText, password) => {
-  // const iv1 = crypto.getRandomValues(new Uint8Array(16));
-  const alg = { name: 'AES-CBC', iv: iv1 };
+  const alg = { name: 'AES-CBC', iv: crypto.getRandomValues(new Uint8Array(16)) };
   // const ptUtf8 = new TextEncoder().encode(plainText);
   const ptUtf8 = LZString.compressToUint8Array(plainText);
   console.log(`bytelength=${ptUtf8.byteLength}`);
   const pwUtf8 = new TextEncoder().encode(password);
   const pwHash = await crypto.subtle.digest('SHA-256', pwUtf8);
   const key = await crypto.subtle.importKey('raw', pwHash, alg, false, ['encrypt']);
-  return crypto.subtle.encrypt(alg, key, ptUtf8);
+  const crypted = await crypto.subtle.encrypt(alg, key, ptUtf8);
+  return concatTA(alg.iv, new Uint8Array(crypted));
 };
 
 const decryptText = async (cryptedbytes, password) => {
-  const alg = { name: 'AES-CBC', iv: iv1 };
+  const alg = { name: 'AES-CBC', iv: cryptedbytes.slice(0, 16) };
   const pwUtf8 = new TextEncoder().encode(password);
   const pwHash = await crypto.subtle.digest('SHA-256', pwUtf8);
   const key = await crypto.subtle.importKey('raw', pwHash, alg, false, ['decrypt']);
-  const decrypted = await crypto.subtle.decrypt(alg, key, cryptedbytes);
+  const decrypted = await crypto.subtle.decrypt(alg, key, cryptedbytes.slice(16));
   return LZString.decompressFromUint8Array(new Uint8Array(decrypted));
 };
 
