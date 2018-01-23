@@ -49,8 +49,8 @@ const cryptAction = () => {
     const crypted64 = base64js.fromByteArray(new Uint8Array(_));
     console.log(`crypted64.length=${crypted64.length}`);
     let formatted = '';
-    for (let i = 0; i < crypted64.length; i += 100) {
-      formatted += (i ? '\n' : '') + crypted64.slice(i, i + 100);
+    for (let i = 0; i < crypted64.length; i += 120) {
+      formatted += (i ? '\n' : '') + crypted64.slice(i, i + 120);
     }
     document.getElementById('cryptzone').value = formatted;
   });
