@@ -1,4 +1,8 @@
-textarea {
-    width:60%;
+textarea#clearzone {
+    width:80em;
+    height:15em;
+}
+textarea#cryptzone {
+    width:70em;
     height:9em;
 }

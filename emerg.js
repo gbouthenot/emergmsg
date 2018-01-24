@@ -30,10 +30,9 @@ const decryptText = async (cr, pw) => {
 };
 
 
-const password = 'mypassword';
-
 const cryptAction = () => {
-  const a = encryptText(document.getElementById('clearzone').value, password);
+  const clear = document.getElementById('clearzone').value;
+  const a = encryptText(clear, document.getElementById('password').value);
   a.then((_) => {
     const crypted64 = base64js.fromByteArray(new Uint8Array(_));
     let formatted = '';
@@ -48,9 +47,9 @@ const decryptAction = () => {
   const crypted64 = document.getElementById('cryptzone').value.replace(/\s/g, '');
   const cryptedbytes = base64js.toByteArray(crypted64);
 
-  const a = decryptText(cryptedbytes, password);
+  const a = decryptText(cryptedbytes, document.getElementById('password').value);
   a.then((_) => {
-    document.getElementById('decryptzone').value = _;
+    document.getElementById('clearzone').value = _;
   });
 };
 
