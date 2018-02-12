@@ -1,3 +1,4 @@
+// password is 'mypassword'
 document.getElementById("cryptzone").value=`
 
 o8qPLpr/bRZ6+pWi3dbKe0cPe3ljX2gET/MM5BQrieAmJE3ANLIc9ETNpiR4wsPsdOlPCwHEjaZE1I+e3PbUPxWz+wu74SuC4SZcREmfIIrih0i0lppbAJ2Z
