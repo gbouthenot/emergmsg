@@ -2,7 +2,7 @@
 /* eslint-disable no-console,no-bitwise */
 
 
-function getTotpToken(secret) {
+async function getTotpToken(secret) {
   function base32decode(str) {
     let curByte = 0; // 12-bit byte
     let dec = 7; // 1st shift is 12-5 bit left
@@ -27,20 +27,19 @@ function getTotpToken(secret) {
   const alg = { name: 'HMAC', hash: { name: 'SHA-1' } };
   const secretU8A = base32decode(secret);
 
-  return crypto.subtle.importKey('raw', secretU8A, alg, true, ['sign', 'verify']).then((key) => {
-    let n = Math.floor(Date.now() / 1000 / 30);
-    const b = new Uint8Array(8);
-    for (let i = 7; i; n >>= 8, --i) {
-      b[i] = n & 0xff;
-    }
-    return this.crypto.subtle.sign({ name: 'HMAC' }, key, b);
-  }).then((s) => {
-    s = new Uint8Array(s);
-    let o = s[s.length - 1] & 0xf;
-    const b = ((s[o++] & 0x7f) << 24) | ((s[o++] & 0xff) << 16) | ((s[o++] & 0xff) << 8) | (s[o] & 0xff);
-    const res = (b % 1000000).toString();
-    return `000000${res}`.substring(res.length);
-  });
+  const key = await crypto.subtle.importKey('raw', secretU8A, alg, true, ['sign', 'verify']);
+
+  let n = Math.floor(Date.now() / 1000 / 30);
+  const b = new Uint8Array(8);
+  for (let i = 7; i; n >>= 8, --i) {
+    b[i] = n & 0xff;
+  }
+  const sig = await this.crypto.subtle.sign({ name: 'HMAC' }, key, b);
+  const s = new Uint8Array(sig);
+  let o = s[s.length - 1] & 0xf;
+  const tot = ((s[o++] & 0x7f) << 24) | ((s[o++] & 0xff) << 16) | ((s[o++] & 0xff) << 8) | (s[o] & 0xff);
+  const res = (tot % 1000000).toString();
+  return `000000${res}`.substring(res.length);
 }
 
 
