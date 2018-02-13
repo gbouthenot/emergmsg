@@ -2,8 +2,8 @@
 /* eslint-disable no-console,no-bitwise */
 
 
-const gen = function gen() {
-  function myb32(str) {
+function getTotpToken(secret) {
+  function base32decode(str) {
     let curByte = 0; // 12-bit byte
     let dec = 7; // 1st shift is 12-5 bit left
     const bytes = [];
@@ -25,12 +25,9 @@ const gen = function gen() {
   }
 
   const alg = { name: 'HMAC', hash: { name: 'SHA-1' } };
-  const secret = 'Ceci est un secret';
-  // Uint8Array(9) [17, 4, 130, 74, 116, 108, 136, 40, 146]
-  const secretU8A = myb32(secret);
+  const secretU8A = base32decode(secret);
 
-  // crypto.subtle.generateKey(alg, true, ['sign', 'verify']).then((key) => {
-  crypto.subtle.importKey('raw', secretU8A, alg, true, ['sign', 'verify']).then((key) => {
+  return crypto.subtle.importKey('raw', secretU8A, alg, true, ['sign', 'verify']).then((key) => {
     let n = Math.floor(Date.now() / 1000 / 30);
     const b = new Uint8Array(8);
     for (let i = 7; i; n >>= 8, --i) {
@@ -43,10 +40,8 @@ const gen = function gen() {
     const b = ((s[o++] & 0x7f) << 24) | ((s[o++] & 0xff) << 16) | ((s[o++] & 0xff) << 8) | (s[o] & 0xff);
     const res = (b % 1000000).toString();
     return `000000${res}`.substring(res.length);
-  }).then((otp) => {
-    console.log(otp);
   });
-};
+}
 
 
 // concatenate UInt8Arrays
@@ -56,6 +51,12 @@ const concatTA = (a, b) => {
   c.set(b, a.length);
   return c;
 };
+
+async function test() {
+  const t = await getTotpToken('Ceci est un secret !');
+  console.log('token:', t);
+}
+
 
 // https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto/encrypt
 const encryptText = async (pt, pw) => {
