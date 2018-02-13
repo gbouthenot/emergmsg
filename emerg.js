@@ -1,5 +1,53 @@
 /* global base64js LZString */
-/* eslint-disable no-console,no-shadow,no-lonely-if */
+/* eslint-disable no-console,no-bitwise */
+
+
+const gen = function gen() {
+  function myb32(str) {
+    let curByte = 0; // 12-bit byte
+    let dec = 7; // 1st shift is 12-5 bit left
+    const bytes = [];
+    for (let i = 0; i < str.length; i++) {
+      const idx = 'abcdefghijklmnopqrstuvwxyz234567'.indexOf(str[i].toLowerCase());
+      if (idx < 0) {
+        continue;
+      }
+      curByte += idx << dec;
+      dec -= 5;
+      if (dec < 0) {
+        bytes.push(curByte >> 4);
+        dec += 8;
+        curByte = (curByte & 15) << 8;
+      }
+    }
+    // remaining bits are ignored !
+    return new Uint8Array(bytes);
+  }
+
+  const alg = { name: 'HMAC', hash: { name: 'SHA-1' } };
+  const secret = 'Ceci est un secret';
+  // Uint8Array(9) [17, 4, 130, 74, 116, 108, 136, 40, 146]
+  const secretU8A = myb32(secret);
+
+  // crypto.subtle.generateKey(alg, true, ['sign', 'verify']).then((key) => {
+  crypto.subtle.importKey('raw', secretU8A, alg, true, ['sign', 'verify']).then((key) => {
+    let n = Math.floor(Date.now() / 1000 / 30);
+    const b = new Uint8Array(8);
+    for (let i = 7; i; n >>= 8, --i) {
+      b[i] = n & 0xff;
+    }
+    return this.crypto.subtle.sign({ name: 'HMAC' }, key, b);
+  }).then((s) => {
+    s = new Uint8Array(s);
+    let o = s[s.length - 1] & 0xf;
+    const b = ((s[o++] & 0x7f) << 24) | ((s[o++] & 0xff) << 16) | ((s[o++] & 0xff) << 8) | (s[o] & 0xff);
+    const res = (b % 1000000).toString();
+    return `000000${res}`.substring(res.length);
+  }).then((otp) => {
+    console.log(otp);
+  });
+};
+
 
 // concatenate UInt8Arrays
 const concatTA = (a, b) => {
