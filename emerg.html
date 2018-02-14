@@ -6,9 +6,14 @@
 <body>
   <textarea id="clearzone"></textarea>
   <br />
-  <input id="password" type="password" value="" />
+  <input id="password" type="password" value="" placeholder="Password" />
   <button type="button" data-action="decrypt">Decrypt</button>
   <button type="button" data-action="crypt">Crypt</button>
+  <input id="otpsec" type="password" value="" placeholder="OTP secret" />
+  <span id="otpvis" class="hidden">
+    <span id="otptok"></span>
+    <span id="otpval"></span>
+  </span>
   <br />
   <textarea id="cryptzone"></textarea>
 

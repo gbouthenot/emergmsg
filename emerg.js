@@ -1,6 +1,7 @@
 /* global base64js LZString */
 /* eslint-disable no-console,no-bitwise */
 
+// PART TOTP
 
 async function getTotpToken(secret) {
   // OTP code inspired by https://github.com/charlestati/requireris
@@ -44,6 +45,36 @@ async function getTotpToken(secret) {
   return `000000${res}`.substring(res.length);
 }
 
+const otpChangeAction = async (a) => {
+  const secret = document.querySelector('input#otpsec').value.trim();
+  const cl = document.querySelector('#otpvis').classList;
+  if (secret.length < 4) {
+    cl.add('hidden');
+    return;
+  }
+  const token = await getTotpToken(secret);
+  document.querySelector('#otptok').innerHTML = token;
+  cl.remove('hidden');
+};
+
+// call itself at sec boundary
+const otpval = document.querySelector('#otpval');
+const otpTimerInit = () => {
+  const time = Date.now() / 1000;
+  const frac = time - Math.floor(time);
+  let per = time / 30;
+  per = 30 - (30 * (per - Math.floor(per)));
+  if (per > 29) {
+    otpChangeAction();
+  }
+  otpval.innerHTML = `${Math.round(per)}s`;
+
+  setTimeout(otpTimerInit, 1000 - (frac * 1000));
+};
+
+otpTimerInit();
+
+// PART CRYPT / DECRYPT
 
 // concatenate UInt8Arrays
 const concatTA = (a, b) => {
@@ -52,12 +83,6 @@ const concatTA = (a, b) => {
   c.set(b, a.length);
   return c;
 };
-
-async function test() {
-  const t = await getTotpToken('Ceci est un secret !');
-  console.log('token:', t);
-}
-
 
 // https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto/encrypt
 const encryptText = async (pt, pw) => {
@@ -110,6 +135,9 @@ const installHandlers = () => {
 
   btn = document.querySelector('button[data-action=decrypt]');
   btn.addEventListener('click', decryptAction);
+
+  btn = document.querySelector('input#otpsec');
+  btn.addEventListener('keyup', otpChangeAction);
 };
 
 installHandlers();
