@@ -3,6 +3,8 @@
 
 
 async function getTotpToken(secret) {
+  // OTP code inspired by https://github.com/charlestati/requireris
+  // demo: https://charlestati.github.io/requireris/
   function base32decode(str) {
     let curByte = 0; // 12-bit byte
     let dec = 7; // 1st shift is 12-5 bit left
