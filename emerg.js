@@ -107,25 +107,27 @@ const decryptText = async (cr, pw) => {
 
 const cryptAction = () => {
   const clear = document.getElementById('clearzone').value;
-  const a = encryptText(clear, document.getElementById('password').value);
-  a.then((_) => {
-    const crypted64 = base64js.fromByteArray(new Uint8Array(_));
-    let formatted = '';
-    for (let i = 0; i < crypted64.length; i += 120) {
-      formatted += (i ? '\n' : '') + crypted64.slice(i, i + 120);
-    }
-    document.getElementById('cryptzone').value = formatted;
-  });
+  encryptText(clear, document.getElementById('password').value)
+    .then((_) => {
+      const crypted64 = base64js.fromByteArray(new Uint8Array(_));
+      let formatted = '';
+      for (let i = 0; i < crypted64.length; i += 120) {
+        formatted += (i ? '\n' : '') + crypted64.slice(i, i + 120);
+      }
+      document.getElementById('cryptzone').value = formatted;
+    })
+    .catch(e => console.log('error: Cannot encrypt:', e));
 };
 
 const decryptAction = () => {
   const crypted64 = document.getElementById('cryptzone').value.replace(/\s/g, '');
   const cryptedbytes = base64js.toByteArray(crypted64);
 
-  const a = decryptText(cryptedbytes, document.getElementById('password').value);
-  a.then((_) => {
-    document.getElementById('clearzone').value = _;
-  });
+  decryptText(cryptedbytes, document.getElementById('password').value)
+    .then((_) => {
+      document.getElementById('clearzone').value = _;
+    })
+    .catch(e => console.log('error: Cannot decrypt:', e));
 };
 
 const installHandlers = () => {
