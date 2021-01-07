@@ -1,5 +1,7 @@
-/* global base64js LZString crypto */
+/* global base64js LZString  */
 /* eslint-disable no-console no-bitwise */
+
+const crypto = window.crypto
 
 // PART TOTP
 
