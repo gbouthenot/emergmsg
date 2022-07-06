@@ -245,6 +245,3 @@ class Main {
     this.otpTimer()
   }
 }
-
-const main = new Main()
-main.installHandlers()
